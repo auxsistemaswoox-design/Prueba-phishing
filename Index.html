@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulador de Phishing - Capacitación Interna</title>
+  <style>
+    :root {
+      --primary: #545759;
+      --accent: #FF9E15;
+      --bg: #eef1f5;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #d7dde5;
+      --success: #198754;
+      --danger: #dc3545;
+      --warning: #fd7e14;
+      --info: #0d6efd;
+      --sidebar: #3f4244;
+      --light-accent: #fff4e5;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 260px;
+      background: linear-gradient(180deg, var(--primary), var(--sidebar));
+      color: #fff;
+      padding: 22px 18px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.14);
+      padding-bottom: 18px;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: bold;
+      font-size: 18px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+    }
+
+    .brand h1 {
+      font-size: 18px;
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .brand p {
+      margin: 3px 0 0;
+      font-size: 12px;
+      opacity: 0.85;
+    }
+
+    .side-card {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 16px;
+      backdrop-filter: blur(4px);
+    }
+
+    .side-card h3 {
+      margin: 0 0 10px;
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .timer {
+      font-size: 28px;
+      font-weight: bold;
+      color: var(--accent);
+      margin-top: 8px;
+    }
+
+    .progress-wrap {
+      margin-top: 10px;
+    }
+
+    .progress-label {
+      font-size: 13px;
+      margin-bottom: 8px;
+      color: #f3f4f6;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 12px;
+      background: rgba(255,255,255,0.16);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+
+    .tips ul {
+      padding-left: 18px;
+      margin: 0;
+    }
+
+    .tips li {
+      margin-bottom: 8px;
+      font-size: 13px;
+      line-height: 1.4;
+      color: #f8fafc;
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .topbar {
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .topbar-left h2 {
+      margin: 0;
+      font-size: 20px;
+      color: var(--primary);
+    }
+
+    .topbar-left p {
+      margin: 4px 0 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      background: var(--light-accent);
+      color: #8a4b00;
+      border: 1px solid #ffd9a0;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .workspace {
+      padding: 24px;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .intro-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 22px;
+      margin-bottom: 22px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    }
+
+    .intro-card h3 {
+      margin-top: 0;
+      color: var(--primary);
+    }
+
+    .student-data {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .student-data input {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-size: 14px;
+      outline: none;
+    }
+
+    .student-data input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(255,158,21,0.12);
+    }
+
+    .exercise {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      margin-bottom: 22px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    }
+
+    .exercise-header {
+      padding: 16px 20px;
+      background: linear-gradient(90deg, rgba(84,87,89,0.08), rgba(255,158,21,0.14));
+      border-bottom: 1px solid var(--border);
+    }
+
+    .exercise-header h3 {
+      margin: 0;
+      font-size: 18px;
+      color: var(--primary);
+    }
+
+    .exercise-header p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .mail-window {
+      margin: 20px;
+      border: 1px solid #cfd6df;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .mail-toolbar {
+      background: #f4f6f8;
+      border-bottom: 1px solid #d9e0e7;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: #d1d5db;
+    }
+
+    .mail-toolbar .dot:nth-child(1) { background: #ff5f57; }
+    .mail-toolbar .dot:nth-child(2) { background: #febc2e; }
+    .mail-toolbar .dot:nth-child(3) { background: #28c840; }
+
+    .mail-content {
+      padding: 18px;
+      background: #fff;
+    }
+
+    .mail-meta {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+
+    .mail-meta div {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .mail-meta strong {
+      color: var(--primary);
+      min-width: 78px;
+    }
+
+    .mail-body {
+      border-top: 1px solid #edf1f5;
+      padding-top: 16px;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .fake-link,
+    .fake-attachment {
+      display: inline-block;
+      margin-top: 10px;
+      background: #f8fafc;
+      border: 1px solid #dbe3ec;
+      border-radius: 10px;
+      padding: 10px 14px;
+      color: var(--info);
+      font-weight: 600;
+    }
+
+    .exercise-body {
+      padding: 0 20px 20px;
+    }
+
+    .question-block {
+      margin-bottom: 18px;
+    }
+
+    .question-block label.title {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .options {
+      display: grid;
+      gap: 10px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      background: #fbfcfd;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .option:hover {
+      border-color: var(--accent);
+      background: #fffaf3;
+    }
+
+    .option input {
+      accent-color: var(--accent);
+      transform: scale(1.08);
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      resize: vertical;
+      font-family: inherit;
+      font-size: 14px;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(255,158,21,0.12);
+    }
+
+    .feedback-box {
+      display: none;
+      margin-top: 18px;
+      border-radius: 14px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      background: #fafafa;
+    }
+
+    .feedback-box.correct {
+      display: block;
+      background: #ecfdf3;
+      border-color: #b7ebc6;
+    }
+
+    .feedback-box.warning {
+      display: block;
+      background: #fff8e8;
+      border-color: #ffe0a3;
+    }
+
+    .feedback-box.incorrect {
+      display: block;
+      background: #fff1f2;
+      border-color: #ffc2c9;
+    }
+
+    .feedback-box h4 {
+      margin: 0 0 8px;
+      font-size: 15px;
+    }
+
+    .feedback-box p {
+      margin: 0;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 28px;
+      margin-bottom: 30px;
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 14px 22px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(255,158,21,0.25);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(0.96);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-secondary:hover {
+      filter: brightness(1.05);
+    }
+
+    .result-panel {
+      display: none;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+      margin-bottom: 30px;
+    }
+
+    .result-panel h2 {
+      margin-top: 0;
+      color: var(--primary);
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+      margin: 18px 0;
+    }
+
+    .result-card {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      background: #fbfcfd;
+    }
+
+    .result-card h4 {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .result-card .big {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .result-summary {
+      margin-top: 16px;
+      border-radius: 14px;
+      padding: 16px;
+      background: #f9fafb;
+      border: 1px solid var(--border);
+    }
+
+    .answers-list {
+      margin-top: 18px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .answers-item {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      background: #fff;
+    }
+
+    .answers-item strong {
+      color: var(--primary);
+    }
+
+    .time-end {
+      color: var(--danger);
+      font-weight: 700;
+    }
+
+    @media (max-width: 980px) {
+      .app {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+      }
+
+      .result-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .student-data {
+        grid-template-columns: 1fr;
+      }
+
+      .workspace {
+        padding: 16px;
+      }
+
+      .topbar {
+        padding: 14px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">IT</div>
+        <div>
+          <h1>Capacitación Anti-Phishing</h1>
+          <p>Simulador interno corporativo</p>
+        </div>
+      </div>
+
+      <div class="side-card">
+        <h3>Tiempo restante</h3>
+        <div id="timer" class="timer">15:00</div>
+      </div>
+
+      <div class="side-card progress-wrap">
+        <div class="progress-label">Avance del test</div>
+        <div class="progress-bar">
+          <div id="progressFill" class="progress-fill"></div>
+        </div>
+        <div style="margin-top:8px;font-size:13px;color:#f8fafc;">
+          <span id="answeredCount">0</span> de 16 respuestas seleccionadas
+        </div>
+      </div>
+
+      <div class="side-card tips">
+        <h3>Qué debes revisar</h3>
+        <ul>
+          <li>Dominio del remitente</li>
+          <li>Urgencia o amenazas</li>
+          <li>Enlaces o adjuntos extraños</li>
+          <li>Solicitudes de contraseñas o pagos</li>
+          <li>Errores de redacción o contexto</li>
+        </ul>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <h2>Simulación de correos sospechosos</h2>
+          <p>Analiza cada mensaje y decide si es confiable o potencialmente fraudulento.</p>
+        </div>
+        <div class="topbar-right">
+          <div class="badge">Colores corporativos activos</div>
+          <div class="badge">Modo estilo Outlook</div>
+        </div>
+      </div>
+
+      <div class="workspace">
+        <section class="intro-card">
+          <h3>Instrucciones</h3>
+          <p>
+            Lee cada correo y responde:
+            <strong>si parece legítimo o sospechoso</strong> y
+            <strong>qué harías</strong>. Al final verás tu puntaje,
+            porcentaje y retroalimentación por ejercicio.
+          </p>
+
+          <div class="student-data">
+            <input type="text" id="nombre" placeholder="Nombre del participante">
+            <input type="text" id="departamento" placeholder="Departamento / Área">
+          </div>
+        </section>
+
+        <div id="questionsContainer"></div>
+
+        <div class="actions">
+          <button class="btn-primary" onclick="gradeExam()">Finalizar y calificar</button>
+          <button class="btn-secondary" onclick="resetExam()">Reiniciar</button>
+        </div>
+
+        <section id="resultPanel" class="result-panel"></section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const exercises = [
+      {
+        id: 1,
+        title: "Restablecimiento urgente de contraseña",
+        hint: "Evalúa dominio, urgencia y solicitud de datos.",
+        subject: "URGENTE: Su contraseña expirará hoy",
+        from: "soporte@microsofft-security.com",
+        to: "usuario@empresa.com",
+        body: `
+          <p>Estimado usuario,</p>
+          <p>Detectamos que su contraseña de correo corporativo expirará hoy a las 18:00 hrs.</p>
+          <p>Para evitar la suspensión de su cuenta, acceda inmediatamente al siguiente enlace y confirme sus datos.</p>
+          <div class="fake-link">Restablecer contraseña</div>
+        `,
+        correctType: "sospechoso",
+        correctAction: "reportar",
+        feedbackCorrect: "Correcto. El dominio está mal escrito, usa urgencia y busca que entregues datos por un enlace no verificado.",
+        feedbackPartial: "Vas bien, pero además debías evitar interactuar con el enlace y reportarlo al área de TI.",
+        feedbackIncorrect: "Este correo es sospechoso. Señales claras: dominio falso, presión por tiempo y solicitud de validar credenciales."
+      },
+      {
+        id: 2,
+        title: "Factura pendiente con archivo adjunto",
+        hint: "Revisa el archivo y el contexto del mensaje.",
+        subject: "Factura pendiente de pago – Marzo",
+        from: "facturacion@proveedor-servicios.com",
+        to: "compras@empresa.com",
+        body: `
+          <p>Buen día,</p>
+          <p>Adjuntamos la factura pendiente correspondiente al mes de marzo.</p>
+          <p>Favor de revisar el archivo adjunto y confirmar el pago hoy mismo para evitar recargos.</p>
+          <div class="fake-attachment">Factura_Marzo.zip</div>
+        `,
+        correctType: "sospechoso",
+        correctAction: "reportar",
+        feedbackCorrect: "Correcto. Un archivo .zip inesperado es una señal de riesgo, sobre todo si intenta forzar una acción rápida.",
+        feedbackPartial: "Buena intuición, pero abrir o descargar el archivo sigue siendo riesgoso. Lo correcto es reportarlo.",
+        feedbackIncorrect: "Este correo es sospechoso. El adjunto comprimido y la presión para pagar 'hoy mismo' son señales de phishing o malware."
+      },
+      {
+        id: 3,
+        title: "Alerta bancaria",
+        hint: "El miedo también es una táctica de manipulación.",
+        subject: "Bloqueo preventivo de su cuenta bancaria",
+        from: "alertas@bancoseguro-clientes.net",
+        to: "usuario@empresa.com",
+        body: `
+          <p>Se ha detectado un acceso irregular desde otro dispositivo.</p>
+          <p>Verifique su identidad y confirme su cuenta aquí para evitar el bloqueo permanente.</p>
+          <div class="fake-link">Verificar cuenta</div>
+        `,
+        correctType: "sospechoso",
+        correctAction: "verificar",
+        feedbackCorrect: "Correcto. El dominio no parece oficial y el mensaje intenta asustarte para que entres al enlace.",
+        feedbackPartial: "Detectaste parte del problema, pero la mejor acción es verificar por canales oficiales y no desde el correo.",
+        feedbackIncorrect: "Este correo es sospechoso. Nunca debes validar cuentas bancarias desde enlaces dudosos enviados por correo."
+      },
+      {
+        id: 4,
+        title: "Comunicación interna de RRHH",
+        hint: "No todo correo corporativo es phishing, pero igual se valida.",
+        subject: "Actualización de prestaciones 2026",
+        from: "rrhh@empresa.com",
+        to: "colaborador@empresa.com",
+        body: `
+          <p>Hola,</p>
+          <p>Compartimos el nuevo documento con cambios de prestaciones y políticas internas.</p>
+          <p>Puedes revisarlo en la intranet corporativa.</p>
+          <div class="fake-link">Portal interno de RRHH</div>
+        `,
+        correctType: "legitimo",
+        correctAction: "validar",
+        feedbackCorrect: "Correcto. Este correo podría ser legítimo por contexto y dominio, pero aun así conviene validar el enlace.",
+        feedbackPartial: "Buena observación, aunque no necesariamente era falso. En correos corporativos siempre revisa el enlace real antes de abrir.",
+        feedbackIncorrect: "Este caso es potencialmente legítimo. La lección aquí es no marcar todo como phishing, sino analizar contexto y verificar."
+      },
+      {
+        id: 5,
+        title: "Premio inesperado",
+        hint: "Las recompensas falsas son muy comunes.",
+        subject: "¡Felicidades! Has ganado una tarjeta de regalo",
+        from: "promociones@premios-empresariales.com",
+        to: "empleado@empresa.com",
+        body: `
+          <p>Como reconocimiento por tu desempeño, has sido seleccionado para recibir una tarjeta de regalo de $5,000 MXN.</p>
+          <p>Solo debes ingresar tus datos corporativos y personales aquí para reclamarla antes de 2 horas.</p>
+          <div class="fake-link">Reclamar premio</div>
+        `,
+        correctType: "sospechoso",
+        correctAction: "reportar",
+        feedbackCorrect: "Correcto. Usa premio, urgencia y solicitud de datos: tres señales clásicas de phishing.",
+        feedbackPartial: "Buena sospecha, pero nunca debes llenar datos ni interactuar con el enlace. Debe reportarse.",
+        feedbackIncorrect: "Este correo es sospechoso. Los premios inesperados con límite de tiempo suelen ser fraudes."
+      },
+      {
+        id: 6,
+        title: "Solicitud urgente del jefe",
+        hint: "Fraude del CEO o suplantación de directivos.",
+        subject: "Necesito apoyo urgente",
+        from: "direccion.general.consultas@gmail.com",
+        to: "finanzas@empresa.com",
+        body: `
+          <p>Estoy en una reunión y no puedo hablar.</p>
+          <p>Necesito que realices una transferencia urgente a un proveedor.</p>
+          <p>Respóndeme por este medio para darte los datos bancarios. Esto no puede esperar.</p>
+        `,
+        correctType: "sospechoso",
+        correctAction: "validar",
+        feedbackCorrect: "Correcto. Es un intento clásico de suplantación. Usa un Gmail genérico y quiere saltarse procesos internos.",
+        feedbackPartial: "Buena lectura, pero lo más importante es validar por otro canal oficial antes de actuar.",
+        feedbackIncorrect: "Este correo es sospechoso. Transferencias urgentes pedidas desde cuentas no corporativas son una bandera roja clara."
+      },
+      {
+        id: 7,
+        title: "Documento compartido",
+        hint: "Los servicios conocidos también se imitan.",
+        subject: "Se ha compartido un documento contigo",
+        from: "no-reply@googledocs-security.com",
+        to: "usuario@empresa.com",
+        body: `
+          <p>Kenneth te ha compartido un documento importante.</p>
+          <p>Accede aquí para revisarlo.</p>
+          <div class="fake-link">Abrir documento</div>
+        `,
+        correctType: "sospechoso",
+        correctAction: "validar",
+        feedbackCorrect: "Correcto. Parece una notificación real, pero el dominio no corresponde al servicio oficial.",
+        feedbackPartial: "Bien detectado en parte, aunque debías verificar el origen por canal oficial antes de abrir.",
+        feedbackIncorrect: "Este correo es sospechoso. Aunque el formato parece familiar, el dominio revela la suplantación."
+      },
+      {
+        id: 8,
+        title: "Encuesta interna",
+        hint: "Aprende a distinguir un correo posible de uno claramente falso.",
+        subject: "Encuesta de clima laboral",
+        from: "comunicacion.interna@empresa.com",
+        to: "empleado@empresa.com",
+        body: `
+          <p>Buen día,</p>
+          <p>Agradecemos responder la siguiente encuesta antes del viernes.</p>
+          <div class="fake-link">Formulario interno</div>
+          <p>Área de Comunicación Interna</p>
+        `,
+        correctType: "legitimo",
+        correctAction: "validar",
+        feedbackCorrect: "Correcto. Parece legítimo por remitente y contexto, pero aun así debes revisar el enlace y que no pida datos sensibles.",
+        feedbackPartial: "La validación es importante, aunque este caso no presenta señales fuertes de fraude.",
+        feedbackIncorrect: "Este correo puede ser legítimo. El objetivo del ejercicio es evaluar con criterio, no asumir que todo es fraude."
+      }
+    ];
+
+    let timeLeft = 15 * 60;
+    let timerInterval = null;
+    let examFinished = false;
+
+    function renderQuestions() {
+      const container = document.getElementById("questionsContainer");
+      container.innerHTML = exercises.map(ex => `
+        <section class="exercise" id="exercise-${ex.id}">
+          <div class="exercise-header">
+            <h3>Ejercicio ${ex.id}: ${ex.title}</h3>
+            <p>${ex.hint}</p>
+          </div>
+
+          <div class="mail-window">
+            <div class="mail-toolbar">
+              <div class="dot"></div>
+              <div class="dot"></div>
+              <div class="dot"></div>
+            </div>
+            <div class="mail-content">
+              <div class="mail-meta">
+                <div><strong>Asunto:</strong> <span>${ex.subject}</span></div>
+                <div><strong>De:</strong> <span>${ex.from}</span></div>
+                <div><strong>Para:</strong> <span>${ex.to}</span></div>
+              </div>
+              <div class="mail-body">${ex.body}</div>
+            </div>
+          </div>
+
+          <div class="exercise-body">
+            <div class="question-block">
+              <label class="title">1. ¿Este correo parece legítimo o sospechoso?</label>
+              <div class="options">
+                <label class="option">
+                  <input type="radio" name="type-${ex.id}" value="legitimo">
+                  <span>Legítimo</span>
+                </label>
+                <label class="option">
+                  <input type="radio" name="type-${ex.id}" value="sospechoso">
+                  <span>Sospechoso</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="question-block">
+              <label class="title">2. ¿Qué harías?</label>
+              <div class="options">
+                ${getActionOptions(ex.id)}
+              </div>
+            </div>
+
+            <div class="question-block">
+              <label class="title">3. Señales de alerta o análisis</label>
+              <textarea id="text-${ex.id}" placeholder="Escribe aquí qué señales detectaste o por qué te parece legítimo..."></textarea>
+            </div>
+
+            <div id="feedback-${ex.id}" class="feedback-box"></div>
+          </div>
+        </section>
+      `).join("");
+
+      addProgressListeners();
+    }
+
+    function getActionOptions(id) {
+      const optionsById = {
+        1: [
+          ["abrir", "Abrir el enlace"],
+          ["responder", "Responder al remitente"],
+          ["reportar", "Reportarlo a Sistemas / TI"]
+        ],
+        2: [
+          ["descargar", "Descargar el archivo ZIP"],
+          ["abrir", "Abrir el archivo"],
+          ["reportar", "Reportarlo a Sistemas / TI"]
+        ],
+        3: [
+          ["abrir", "Abrir el enlace"],
+          ["verificar", "Verificar con el banco por canal oficial"],
+          ["responder", "Responder al remitente"]
+        ],
+        4: [
+          ["validar", "Validar que el enlace sea corporativo antes de abrir"],
+          ["ignorar", "Ignorarlo"],
+          ["reenviar", "Reenviarlo a todos"]
+        ],
+        5: [
+          ["abrir", "Abrir el enlace"],
+          ["reportar", "Reportarlo"],
+          ["llenar", "Llenar los datos solicitados"]
+        ],
+        6: [
+          ["transferir", "Hacer la transferencia"],
+          ["validar", "Validarlo por otro canal oficial"],
+          ["responder", "Responder de inmediato"]
+        ],
+        7: [
+          ["abrir", "Abrir el documento"],
+          ["validar", "Verificar si realmente fue compartido por canal oficial"],
+          ["responder", "Responder al remitente"]
+        ],
+        8: [
+          ["validar", "Validar que el formulario sea oficial antes de responder"],
+          ["ignorar", "Ignorarlo completamente"],
+          ["compartir", "Compartirlo sin revisar"]
+        ]
+      };
+
+      return optionsById[id].map(opt => `
+        <label class="option">
+          <input type="radio" name="action-${id}" value="${opt[0]}">
+          <span>${opt[1]}</span>
+        </label>
+      `).join("");
+    }
+
+    function addProgressListeners() {
+      document.querySelectorAll('input[type="radio"]').forEach(input => {
+        input.addEventListener("change", updateProgress);
+      });
+    }
+
+    function updateProgress() {
+      const totalAnswers = exercises.length * 2;
+      let answered = 0;
+
+      exercises.forEach(ex => {
+        if (document.querySelector(`input[name="type-${ex.id}"]:checked`)) answered++;
+        if (document.querySelector(`input[name="action-${ex.id}"]:checked`)) answered++;
+      });
+
+      const percent = Math.round((answered / totalAnswers) * 100);
+      document.getElementById("progressFill").style.width = percent + "%";
+      document.getElementById("answeredCount").textContent = answered;
+    }
+
+    function startTimer() {
+      const timer = document.getElementById("timer");
+      timerInterval = setInterval(() => {
+        if (examFinished) {
+          clearInterval(timerInterval);
+          return;
+        }
+
+        const minutes = String(Math.floor(timeLeft / 60)).padStart(2, "0");
+        const seconds = String(timeLeft % 60).padStart(2, "0");
+        timer.textContent = `${minutes}:${seconds}`;
+
+        if (timeLeft <= 60) {
+          timer.classList.add("time-end");
+        }
+
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          gradeExam(true);
+        }
+
+        timeLeft--;
+      }, 1000);
+    }
+
+    function gradeExam(autoSubmit = false) {
+      if (examFinished) return;
+      examFinished = true;
+      clearInterval(timerInterval);
+
+      let score = 0;
+      const maxScore = exercises.length * 2;
+      const resultPanel = document.getElementById("resultPanel");
+
+      let answerReview = "";
+
+      exercises.forEach(ex => {
+        const selectedType = document.querySelector(`input[name="type-${ex.id}"]:checked`)?.value || "";
+        const selectedAction = document.querySelector(`input[name="action-${ex.id}"]:checked`)?.value || "";
+        const feedbackBox = document.getElementById(`feedback-${ex.id}`);
+
+        let exScore = 0;
+        if (selectedType === ex.correctType) exScore++;
+        if (selectedAction === ex.correctAction) exScore++;
+        score += exScore;
+
+        let cls = "incorrect";
+        let message = ex.feedbackIncorrect;
+
+        if (exScore === 2) {
+          cls = "correct";
+          message = ex.feedbackCorrect;
+        } else if (exScore === 1) {
+          cls = "warning";
+          message = ex.feedbackPartial;
+        }
+
+        feedbackBox.className = `feedback-box ${cls}`;
+        feedbackBox.innerHTML = `
+          <h4>${exScore === 2 ? "Respuesta correcta" : exScore === 1 ? "Respuesta parcial" : "Respuesta incorrecta"}</h4>
+          <p>${message}</p>
+        `;
+
+        answerReview += `
+          <div class="answers-item">
+            <strong>Ejercicio ${ex.id}:</strong> ${ex.title}<br>
+            Respuesta correcta: <strong>${capitalize(ex.correctType)}</strong> /
+            <strong>${actionLabel(ex.id, ex.correctAction)}</strong>
+          </div>
+        `;
+      });
+
+      const percentage = Math.round((score / maxScore) * 100);
+      const nombre = document.getElementById("nombre").value || "Participante";
+      const departamento = document.getElementById("departamento").value || "No especificado";
+
+      let level = "";
+      if (percentage >= 90) {
+        level = "Excelente nivel de detección. Demuestras muy buen criterio ante correos sospechosos.";
+      } else if (percentage >= 75) {
+        level = "Buen desempeño. Identificas la mayoría de las amenazas, pero aún puedes reforzar algunos criterios.";
+      } else if (percentage >= 50) {
+        level = "Nivel intermedio. Conviene reforzar señales de alerta y procedimientos de validación.";
+      } else {
+        level = "Nivel de riesgo alto. Se recomienda capacitación adicional para evitar incidentes.";
+      }
+
+      resultPanel.style.display = "block";
+      resultPanel.innerHTML = `
+        <h2>${autoSubmit ? "Tiempo finalizado" : "Resultado del simulador"}</h2>
+        <p><strong>Participante:</strong> ${nombre}</p>
+        <p><strong>Departamento:</strong> ${departamento}</p>
+
+        <div class="result-grid">
+          <div class="result-card">
+            <h4>Puntaje</h4>
+            <div class="big">${score}/${maxScore}</div>
+          </div>
+          <div class="result-card">
+            <h4>Porcentaje</h4>
+            <div class="big">${percentage}%</div>
+          </div>
+          <div class="result-card">
+            <h4>Resultado</h4>
+            <div class="big" style="font-size:20px;">${getLevelWord(percentage)}</div>
+          </div>
+        </div>
+
+        <div class="result-summary">
+          <p>${level}</p>
+          <p><strong>Recomendación:</strong> Antes de abrir enlaces, descargar archivos o responder solicitudes urgentes, valida siempre el remitente, el dominio y el contexto del mensaje.</p>
+        </div>
+
+        <div class="answers-list">
+          ${answerReview}
+        </div>
+      `;
+
+      resultPanel.scrollIntoView({ behavior: "smooth" });
+    }
+
+    function getLevelWord(percentage) {
+      if (percentage >= 90) return "Excelente";
+      if (percentage >= 75) return "Bueno";
+      if (percentage >= 50) return "Regular";
+      return "Crítico";
+    }
+
+    function capitalize(text) {
+      return text.charAt(0).toUpperCase() + text.slice(1);
+    }
+
+    function actionLabel(exerciseId, value) {
+      const map = {
+        1: {
+          abrir: "Abrir el enlace",
+          responder: "Responder al remitente",
+          reportar: "Reportarlo a Sistemas / TI"
+        },
+        2: {
+          descargar: "Descargar el archivo ZIP",
+          abrir: "Abrir el archivo",
+          reportar: "Reportarlo a Sistemas / TI"
+        },
+        3: {
+          abrir: "Abrir el enlace",
+          verificar: "Verificar con el banco por canal oficial",
+          responder: "Responder al remitente"
+        },
+        4: {
+          validar: "Validar que el enlace sea corporativo antes de abrir",
+          ignorar: "Ignorarlo",
+          reenviar: "Reenviarlo a todos"
+        },
+        5: {
+          abrir: "Abrir el enlace",
+          reportar: "Reportarlo",
+          llenar: "Llenar los datos solicitados"
+        },
+        6: {
+          transferir: "Hacer la transferencia",
+          validar: "Validarlo por otro canal oficial",
+          responder: "Responder de inmediato"
+        },
+        7: {
+          abrir: "Abrir el documento",
+          validar: "Verificar si realmente fue compartido por canal oficial",
+          responder: "Responder al remitente"
+        },
+        8: {
+          validar: "Validar que el formulario sea oficial antes de responder",
+          ignorar: "Ignorarlo completamente",
+          compartir: "Compartirlo sin revisar"
+        }
+      };
+      return map[exerciseId][value] || value;
+    }
+
+    function resetExam() {
+      location.reload();
+    }
+
+    renderQuestions();
+    startTimer();
+    updateProgress();
+  </script>
+</body>
+</html>
